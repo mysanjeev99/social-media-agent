@@ -43,8 +43,8 @@ This project is an intelligent **multi-agent system** that fetches recent news a
 ### Clone and Install Dependencies
 
 ```bash
-git clone https://github.com/your-username/ai-news-agent.git
-cd ai-news-agent
+git clone https://github.com/mysanjeev99/social-media-agent.git
+cd social-media-agent
 pip install -r requirements.txt
 ```
 
