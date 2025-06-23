@@ -21,7 +21,7 @@ This project is an intelligent **multi-agent system** that fetches recent news a
 ## 🧰 Tech Stack
 
 * **Frontend/UI**: Streamlit
-* **Web Scraping**: BeautifulSoup, `requests`
+* **Web Scraping**: BeautifulSoup, requests
 * **LLM Integration**: Google ADK (Agents Development Kit), Gemini, GPT, Claude
 * **Backend Logic**: Python asyncio, multi-agent orchestration
 * **Deployment**: Local or cloud (e.g., AWS, Streamlit Cloud)
