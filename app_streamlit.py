@@ -225,7 +225,8 @@ if "page" not in st.session_state:
     st.session_state["page"] = "llm_connector"
 
 if st.session_state["page"] == "llm_connector":
-    st.title("🔌 LLM Connector")
+    st.title("🗞️ AI-powered News Agent")
+    st.subheader("🔌 LLM Connector")
     llm_provider = st.selectbox("Select LLM Provider:", list(ALL_MODELS.keys()))
     selected_model = st.selectbox("Select Model:", ALL_MODELS[llm_provider])
     st.session_state["llm_model"] = selected_model
