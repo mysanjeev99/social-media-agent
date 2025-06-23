@@ -207,116 +207,134 @@ async def run_news_agent(model, combined_news):
     session = await session_service.get_session(app_name="news_app", user_id="u1", session_id="sess1")
     return session.state.get("safety", ""), session.state.get("final_post", ""), session.state
 
-# --- Model Options ---
-GOOGLE_API_MODELS = ["gemini-2.0-flash", "gemini-2.0-pro"]
-GOOGLE_VERTEX_MODELS = ["gemini-1.5-pro-001", "gemini-1.5-flash-001"]
-OPENAI_MODELS = ["openai/gpt-4.1", "openai/gpt-4o"]
-ANTHROPIC_MODELS = ["anthropic/claude-sonnet-4-20250514"]
-ALL_MODELS = {
-    "Google API": GOOGLE_API_MODELS,
-    "Google Vertex API": GOOGLE_VERTEX_MODELS,
-    "OpenAI": OPENAI_MODELS,
-    "Anthropic": ANTHROPIC_MODELS
-}
+def main():
+    # --- Model Options ---
+    GOOGLE_API_MODELS = ["gemini-2.0-flash", "gemini-2.0-pro"]
+    GOOGLE_VERTEX_MODELS = ["gemini-1.5-pro-001", "gemini-1.5-flash-001"]
+    OPENAI_MODELS = ["openai/gpt-4.1", "openai/gpt-4o"]
+    ANTHROPIC_MODELS = ["anthropic/claude-sonnet-4-20250514"]
+    ALL_MODELS = {
+        "Google API": GOOGLE_API_MODELS,
+        "Google Vertex API": GOOGLE_VERTEX_MODELS,
+        "OpenAI": OPENAI_MODELS,
+        "Anthropic": ANTHROPIC_MODELS
+    }
 
-# --- Navigation Logic ---
-st.set_page_config(layout="wide")
-if "page" not in st.session_state:
-    st.session_state["page"] = "llm_connector"
+    # --- Navigation Logic ---
+    st.set_page_config(layout="wide")
+    if "page" not in st.session_state:
+        st.session_state["page"] = "llm_connector"
 
-if st.session_state["page"] == "llm_connector":
-    st.title("🗞️ AI-powered News Agent")
-    st.subheader("🔌 LLM Connector")
-    llm_provider = st.selectbox("Select LLM Provider:", list(ALL_MODELS.keys()))
-    selected_model = st.selectbox("Select Model:", ALL_MODELS[llm_provider])
-    st.session_state["llm_model"] = selected_model
-    st.session_state["provider"] = llm_provider
+    if st.session_state["page"] == "llm_connector":
+        st.title("🗞️ AI-powered News Agent")
+        st.subheader("🔌 LLM Connector")
+        llm_provider = st.selectbox("Select LLM Provider:", list(ALL_MODELS.keys()))
+        selected_model = st.selectbox("Select Model:", ALL_MODELS[llm_provider])
+        st.session_state["llm_model"] = selected_model
+        st.session_state["provider"] = llm_provider
 
-    if llm_provider == "Google API":
-        api_key = st.text_input("Enter your Google API Key:", type="password")
-        if api_key:
-            os.environ.clear()
-            os.environ["GOOGLE_API_KEY"] = api_key
-            os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "false"
-            st.success("Google API key set.")
+        if llm_provider == "Google API":
+            api_key = None
+            os.environ["GOOGLE_API_KEY"] = ""
+            os.environ["OPENAI_API_KEY"] = ""
+            os.environ["ANTHROPIC_API_KEY"] = ""
+            api_key = st.text_input("Enter your Google API Key:", type="password")
+            if api_key:
+                os.environ.clear()
+                os.environ["GOOGLE_API_KEY"] = api_key
+                os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "false"
+                st.success("Google API key set.")
 
-    elif llm_provider == "Google Vertex API":
-        api_key = st.text_input("Enter your Google Vertex AI Key:", type="password")
-        if api_key:
-            os.environ.clear()
-            os.environ["GOOGLE_API_KEY"] = api_key
-            os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
-            st.success("Google Vertex AI key set.")
+        elif llm_provider == "Google Vertex API":
+            api_key = None
+            os.environ["GOOGLE_API_KEY"] = ""
+            api_key = st.text_input("Enter your Google Vertex AI Key:", type="password")
+            if api_key:
+                os.environ.clear()
+                os.environ["GOOGLE_API_KEY"] = api_key
+                os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
+                st.success("Google Vertex AI key set.")
 
-    elif llm_provider == "OpenAI":
-        api_key = st.text_input("Enter your OpenAI API Key:", type="password")
-        if api_key:
-            os.environ.clear()
-            os.environ["OPENAI_API_KEY"] = api_key
-            st.success("OpenAI API key set.")
+        elif llm_provider == "OpenAI":
+            api_key = None
+            os.environ["OPENAI_API_KEY"] = ""
+            api_key = st.text_input("Enter your OpenAI API Key:", type="password")
+            if api_key:
+                os.environ.clear()
+                os.environ["OPENAI_API_KEY"] = api_key
+                st.success("OpenAI API key set.")
 
-    elif llm_provider == "Anthropic":
-        api_key = st.text_input("Enter your Anthropic API Key:", type="password")
-        if api_key:
-            os.environ.clear()
-            os.environ["ANTHROPIC_API_KEY"] = api_key
-            st.success("Anthropic API key set.")
+        elif llm_provider == "Anthropic":
+            api_key = None
+            os.environ["ANTHROPIC_API_KEY"] = ""
+            api_key = st.text_input("Enter your Anthropic API Key:", type="password")
+            if api_key:
+                os.environ.clear()
+                os.environ["ANTHROPIC_API_KEY"] = api_key
+                st.success("Anthropic API key set.")
 
-    if st.button("▶️ Start App"):
-        st.session_state["page"] = "news_poster"
-        st.rerun()
-
-    st.info("About this App: This application is Developed and built by Sanjeev Mohan(mysanjeev99@gmail.com), Balaharidass Ramachandran and Karthikeyan S. \n" \
-    "Social Media Agent - is an intelligent content creation tool designed to generate social media posts based on a given topic and timeframe. " \
-    "It features built-in content filtering to ensure quality and relevance—if the generated content doesn't align with the intended topic or standards, " \
-    "it won't be published. \n\n" \
-    "This application uses a multi-agent architecture to ensure the news content it generates is informative, safe, and ready for public dissemination. " \
-    "At its core, it leverages a sequential pipeline of three specialized LLM agents that work together to process and refine the input. " \
-    "The first agent, called the NewsGenerator, takes a collection of recent news articles with 'get_news' Tool and produces a single, coherent summary in a formal and journalistic tone. " \
-    "This summary captures the essential facts, events, and context from all the articles combined. Once the summary is generated, it is passed to the second agent, " \
-    "the ContentFilter. This agent performs a strict safety evaluation, determining whether the text is suitable for public sharing on professional platforms like LinkedIn or Twitter. " \
-    "It checks for content that might be considered hateful, politically biased, graphic, or otherwise inappropriate. Based on this assessment, " \
-    "it returns either 'Safe' or 'Unsafe' with no additional commentary. If the content is deemed safe, it proceeds to the third and final agent, " \
-    "the PostFormatter. This agent transforms the formal summary into an engaging, platform-appropriate social media post. " \
-    "It restructures the text for readability, adds a compelling hook, and includes hashtags or emojis to increase engagement. " \
-    "These three agents are orchestrated by a SequentialAgent controller that ensures the workflow runs in the correct order. " \
-    "This modular approach not only enforces content quality and safety but also makes the system flexible for future extensions or use cases.", icon="ℹ️")
-    st.warning('Currently only tested with Google API', icon="⚠️")
-    # --- Disclaimer Box ---
-    st.markdown(":orange-badge[⚠️ This content is AI-generated and may not be accurate. Please verify facts before relying on them.]")
-
-
-elif st.session_state["page"] == "news_poster":
-    st.title("🗞️ AI-powered News Agent")
-    query = st.text_input("Enter news topic:", value="AI")
-    time_range = st.selectbox("Time range:", ["1h", "6h", "1d"], index=0)
-
-    if st.button("Fetch & Run AI Agent"):
-        with st.spinner("Fetching news..."):
-            articles = get_the_news(query, time_range)
-        if not articles:
-            st.error("No articles found for this topic and time range.")
+        if api_key: 
+            if st.button("▶️ Start App"):
+                st.session_state["page"] = "news_poster"
+                st.rerun()
         else:
-            csv_columns = ["Headline", "Source", "Posted", "Description", "Link"]
-            csv_data = [dict(zip(csv_columns, art)) for art in articles]
-            st.subheader("📋 Combined News")
-            st.dataframe(csv_data)
+            st.warning("API key not set. Please enter a valid API key and press enter to show Start App Button.")
 
-            combined = "\n\n".join([f"Headline: {h}\nSource: {s}\nDesc: {d}" for h, s, p, d, l in articles])
-            with st.spinner("Running AI agents..."):
-                model = st.session_state["llm_model"]
-                safety, post, state = asyncio.run(run_news_agent(model, combined))
 
-            st.subheader("🔒 Safety Check")
-            st.write(safety)
-            if safety.strip() == "Safe":
-                st.subheader("📣 Final Post")
-                st.text_area("Post Output", post, height=200)
+        st.info("About this App: This application is Developed and built by Sanjeev Mohan(mysanjeev99@gmail.com), Balaharidass Ramachandran and Karthikeyan S. \n" \
+        "Social Media Agent - is an intelligent content creation tool designed to generate social media posts based on a given topic and timeframe. " \
+        "It features built-in content filtering to ensure quality and relevance—if the generated content doesn't align with the intended topic or standards, " \
+        "it won't be published. \n\n" \
+        "This application uses a multi-agent architecture to ensure the news content it generates is informative, safe, and ready for public dissemination. " \
+        "At its core, it leverages a sequential pipeline of three specialized LLM agents that work together to process and refine the input. " \
+        "The first agent, called the NewsGenerator, takes a collection of recent news articles with 'get_news' Tool and produces a single, coherent summary in a formal and journalistic tone. " \
+        "This summary captures the essential facts, events, and context from all the articles combined. Once the summary is generated, it is passed to the second agent, " \
+        "the ContentFilter. This agent performs a strict safety evaluation, determining whether the text is suitable for public sharing on professional platforms like LinkedIn or Twitter. " \
+        "It checks for content that might be considered hateful, politically biased, graphic, or otherwise inappropriate. Based on this assessment, " \
+        "it returns either 'Safe' or 'Unsafe' with no additional commentary. If the content is deemed safe, it proceeds to the third and final agent, " \
+        "the PostFormatter. This agent transforms the formal summary into an engaging, platform-appropriate social media post. " \
+        "It restructures the text for readability, adds a compelling hook, and includes hashtags or emojis to increase engagement. " \
+        "These three agents are orchestrated by a SequentialAgent controller that ensures the workflow runs in the correct order. " \
+        "This modular approach not only enforces content quality and safety but also makes the system flexible for future extensions or use cases.", icon="ℹ️")
+        st.warning('Currently only tested with Google API', icon="⚠️")
+        # --- Disclaimer Box ---
+        st.markdown(":orange-badge[⚠️ This content is AI-generated and may not be accurate. Please verify facts before relying on them.]")
+
+
+    elif st.session_state["page"] == "news_poster":
+        st.title("🗞️ AI-powered News Agent")
+        query = st.text_input("Enter news topic:", value="AI")
+        time_range = st.selectbox("Time range:", ["1h", "6h", "1d"], index=0)
+
+        if st.button("Fetch & Run AI Agent"):
+            with st.spinner("Fetching news..."):
+                articles = get_the_news(query, time_range)
+            if not articles:
+                st.error("No articles found for this topic and time range.")
             else:
-                st.error("Content was flagged as unsafe and will not be posted.", icon="⚠️")
+                csv_columns = ["Headline", "Source", "Posted", "Description", "Link"]
+                csv_data = [dict(zip(csv_columns, art)) for art in articles]
+                st.subheader("📋 Combined News")
+                st.dataframe(csv_data)
 
-    if st.button("🔄 Reset"):
-        st.rerun()
+                combined = "\n\n".join([f"Headline: {h}\nSource: {s}\nDesc: {d}" for h, s, p, d, l in articles])
+                with st.spinner("Running AI agents..."):
+                    model = st.session_state["llm_model"]
+                    safety, post, state = asyncio.run(run_news_agent(model, combined))
 
-    # --- Disclaimer Box ---
-    st.markdown(":orange-badge[⚠️ This content is AI-generated and may not be accurate. Please verify facts before relying on them.]")
+                st.subheader("🔒 Safety Check")
+                st.write(safety)
+                if safety.strip() == "Safe":
+                    st.subheader("📣 Final Post")
+                    st.text_area("Post Output", post, height=200)
+                else:
+                    st.error("Content was flagged as unsafe and will not be posted.", icon="⚠️")
+
+        if st.button("🔄 Reset"):
+            st.rerun()
+
+        # --- Disclaimer Box ---
+        st.markdown(":orange-badge[⚠️ This content is AI-generated and may not be accurate. Please verify facts before relying on them.]")
+if __name__ == "__main__":
+    os.environ.clear()
+    main()
