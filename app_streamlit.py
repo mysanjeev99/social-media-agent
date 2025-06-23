@@ -228,7 +228,7 @@ def main():
 
     if st.session_state["page"] == "llm_connector":
         os.environ.clear()
-        st.title("🗞️ AI-powered News Agent")
+        st.title("🗞️ AI Powered News Agent")
         st.subheader("🔌 LLM Connector")
         llm_provider = st.selectbox("Select LLM Provider:", list(ALL_MODELS.keys()))
         selected_model = st.selectbox("Select Model:", ALL_MODELS[llm_provider])
