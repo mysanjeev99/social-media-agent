@@ -19,6 +19,7 @@ from google.adk.runners import Runner
 from google.adk.events import Event
 from typing import AsyncGenerator
 from typing_extensions import override
+from google.genai.errors import ClientError
 
 # --- Hide Sidebar ---
 st.markdown("""
@@ -226,6 +227,7 @@ def main():
         st.session_state["page"] = "llm_connector"
 
     if st.session_state["page"] == "llm_connector":
+        os.environ.clear()
         st.title("🗞️ AI-powered News Agent")
         st.subheader("🔌 LLM Connector")
         llm_provider = st.selectbox("Select LLM Provider:", list(ALL_MODELS.keys()))
@@ -234,42 +236,28 @@ def main():
         st.session_state["provider"] = llm_provider
 
         if llm_provider == "Google API":
-            api_key = None
-            os.environ["GOOGLE_API_KEY"] = ""
-            os.environ["OPENAI_API_KEY"] = ""
-            os.environ["ANTHROPIC_API_KEY"] = ""
             api_key = st.text_input("Enter your Google API Key:", type="password")
             if api_key:
-                os.environ.clear()
                 os.environ["GOOGLE_API_KEY"] = api_key
                 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "false"
                 st.success("Google API key set.")
 
         elif llm_provider == "Google Vertex API":
-            api_key = None
-            os.environ["GOOGLE_API_KEY"] = ""
             api_key = st.text_input("Enter your Google Vertex AI Key:", type="password")
             if api_key:
-                os.environ.clear()
                 os.environ["GOOGLE_API_KEY"] = api_key
                 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "true"
                 st.success("Google Vertex AI key set.")
 
         elif llm_provider == "OpenAI":
-            api_key = None
-            os.environ["OPENAI_API_KEY"] = ""
             api_key = st.text_input("Enter your OpenAI API Key:", type="password")
             if api_key:
-                os.environ.clear()
                 os.environ["OPENAI_API_KEY"] = api_key
                 st.success("OpenAI API key set.")
 
         elif llm_provider == "Anthropic":
-            api_key = None
-            os.environ["ANTHROPIC_API_KEY"] = ""
             api_key = st.text_input("Enter your Anthropic API Key:", type="password")
             if api_key:
-                os.environ.clear()
                 os.environ["ANTHROPIC_API_KEY"] = api_key
                 st.success("Anthropic API key set.")
 
@@ -302,7 +290,7 @@ def main():
 
 
     elif st.session_state["page"] == "news_poster":
-        st.title("🗞️ AI-powered News Agent")
+        st.title("🗞️ AI Powered News Agent")
         query = st.text_input("Enter news topic:", value="AI")
         time_range = st.selectbox("Time range:", ["1h", "6h", "1d"], index=0)
 
@@ -327,8 +315,10 @@ def main():
                 if safety.strip() == "Safe":
                     st.subheader("📣 Final Post")
                     st.text_area("Post Output", post, height=200)
-                else:
+                elif safety.strip() == "Unsafe":
                     st.error("Content was flagged as unsafe and will not be posted.", icon="⚠️")
+                else:
+                    st.error("Unknown Error, Possible API KEY Error?", icon="⚠️")
 
         if st.button("🔄 Reset"):
             st.rerun()
@@ -336,5 +326,4 @@ def main():
         # --- Disclaimer Box ---
         st.markdown(":orange-badge[⚠️ This content is AI-generated and may not be accurate. Please verify facts before relying on them.]")
 if __name__ == "__main__":
-    os.environ.clear()
     main()
