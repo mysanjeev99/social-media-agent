@@ -129,3 +129,18 @@ The entire pipeline is managed via a `SequentialAgent` that orchestrates flow fr
 
 Feel free to reach out with questions or collaboration ideas:
 📧 [mysanjeev99@gmail.com](mailto:mysanjeev99@gmail.com)
+
+---
+
+## License
+
+This software is released under the **Sanjeev Mohan Custom License (Non-Commercial / Attribution / Paid Corporate License)**.
+
+**Summary for Users:**
+
+- ✅ **Free for personal, educational, or non-profit use**
+- ✅ **You can modify and redistribute**, as long as you give credit to **Sanjeev Mohan**
+- ⚠️ **Commercial or corporate use requires a paid license** – contact [Your Email or Website]
+- ⚠️ **No warranty:** This software is provided "as-is"; the author is not liable for any damages
+
+For full license details, see the [LICENSE](LICENSE) file.
